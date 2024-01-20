@@ -16,7 +16,7 @@ These instructions will get you a copy of the project up and running on your loc
 1. **Clone the Repository**
 
    ```bash
-   git clone [URL_of_swap-aggregator-api_repo]
+   git clone https://github.com/Avento-Labs/swap-aggregator-api.git
    ```
 
 2. **Install Dependencies**
@@ -44,9 +44,9 @@ These instructions will get you a copy of the project up and running on your loc
    ```bash
     npm run test
    ```
-   > This will run a testing script from the `test` directory and will test the API endpoints with arbitrary data for token -> token swap.
+   > This will run a testing script from the `test` directory and will test the API endpoints with arbitrary data for ETH -> token swap.
 
 ```diff
 - Many values have been hardcoded in the `test` script for the sake of assignment.
-+ Current flow is written for the Token -> Token swap only. The script in the `test` directory runs for USDT/WETH pair.
++ Current flow is written for the ETH -> Token swap only. The script in the `test` directory runs for ETH/USDT pair.
 ```
