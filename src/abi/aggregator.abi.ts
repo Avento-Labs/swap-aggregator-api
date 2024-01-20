@@ -40,7 +40,14 @@ export const abi = [
     ],
     name: 'execute',
     outputs: [],
-    stateMutability: 'nonpayable',
+    stateMutability: 'payable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'recieve',
+    outputs: [],
+    stateMutability: 'payable',
     type: 'function',
   },
 ];

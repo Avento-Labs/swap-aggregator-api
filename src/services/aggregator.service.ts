@@ -28,9 +28,10 @@ async function selectAMMsDynamically(
   const ammNames: AMMName[] = ['Uniswap', 'Sushiswap'];
   const ammDataPromises = ammNames.map((ammName) => getAMMData(ammName, tokenIn, tokenOut, amount));
   const ammDatas = await Promise.all(ammDataPromises);
+  const parsedAmount = Number.parseFloat(ethers.utils.formatEther(amount.toString()));
 
   return ammDatas
-    .filter((amm) => amm.liquidity > amount)
+    .filter((amm) => amm.liquidity > parsedAmount)
     .sort((a, b) => a.slippage - b.slippage)
     .slice(0, 2)
     .map((amm) => amm);
@@ -47,14 +48,13 @@ function encodeSwapCallData(
 ): string {
   const router = new ethers.Contract(ammAddress, routerABI); // Uniswap or Sushiswap router address
 
-  const amountIn = ethers.utils.parseUnits(amount.toString(), 'ether');
+  // const amountIn = ethers.utils.parseUnits(amount.toString(), 'ether');
   const amountOutMin = 0;
   const path = sortTokens(tokenIn, tokenOut);
   const to = userAddress;
   const deadline = Math.floor(Date.now() / 1000) + 60 * 20; // 20 minutes from the current Unix time
 
-  const data = router.interface.encodeFunctionData('swapExactTokensForTokens', [
-    amountIn,
+  const data = router.interface.encodeFunctionData('swapExactETHForTokens', [
     amountOutMin,
     path,
     to,
@@ -72,10 +72,11 @@ export async function constructSwapCallData(
   amount: number
 ): Promise<CallData[]> {
   const selectedAMMs: AMMData[] = await selectAMMsDynamically(tokenIn, tokenOut, amount);
+  const dividedAmount = amount / selectedAMMs.length;
   const callDatas = selectedAMMs.map((amm) => {
     return {
       target: amm.ammAddress,
-      data: encodeSwapCallData(amm.ammAddress, userAddress, tokenIn, tokenOut, amount),
+      data: encodeSwapCallData(amm.ammAddress, userAddress, tokenIn, tokenOut, dividedAmount),
     };
   });
 
